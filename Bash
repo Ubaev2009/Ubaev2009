@@ -1,0 +1,66 @@
+pip install python-telegram-bot
+import telegram
+from telegram.ext import Updater, CommandHandler, CallbackContext
+from telegram import Update
+
+# Переменная для хранения валюты игрока
+user_data = {}
+
+# Команда /start
+def start(update: Update, context: CallbackContext) -> None:
+    user_id = update.message.from_user.id
+    if user_id not in user_data:
+        user_data[user_id] = {'currency': 0, 'name': update.message.from_user.first_name}
+    update.message.reply_text(
+        f"Добро пожаловать, {user_data[user_id]['name']}! Это игра-кликер.\n"
+        "Нажимай /click, чтобы заработать валюту 'Путиниум'.\n"
+        "Проверь баланс с помощью /balance."
+    )
+
+# Команда /click для заработка валюты
+def click(update: Update, context: CallbackContext) -> None:
+    user_id = update.message.from_user.id
+    if user_id not in user_data:
+        update.message.reply_text("Сначала начни игру с /start!")
+        return
+    
+    # Добавляем 1 единицу валюты за клик
+    user_data[user_id]['currency'] += 1
+    update.message.reply_text(
+        f"Ты кликнул! Теперь у тебя {user_data[user_id]['currency']} Путиниумов.\n"
+        "Криминальный бонус: чем больше кликаешь, тем ближе к власти!"
+    )
+
+# Команда /balance для проверки баланса
+def balance(update: Update, context: CallbackContext) -> None:
+    user_id = update.message.from_user.id
+    if user_id not in user_data:
+        update.message.reply_text("Сначала начни игру с /start!")
+        return
+    
+    update.message.reply_text(
+        f"{user_data[user_id]['name']}, твой баланс: {user_data[user_id]['currency']} Путиниумов.\n"
+        "Криминал в деле!"
+    )
+
+# Основная функция для запуска бота
+def main() -> None:
+    # Вставьте сюда ваш токен от BotFather
+    updater = Updater ("7956083682:AAGA9hIZqGNaoiIcBbH44cbabuFE1OZnkQY")
+
+    # Получаем диспетчер для регистрации обработчиков
+    dp = updater.dispatcher
+
+    # Регистрируем команды
+    dp.add_handler(CommandHandler("start", start))
+    dp.add_handler(CommandHandler("click", click))
+    dp.add_handler(CommandHandler("balance", balance))
+
+    # Запускаем бота
+    updater.start_polling()
+    updater.idle()
+
+if name == '__main__':
+    main()
+
+  
