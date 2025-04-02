@@ -1,5 +1,6 @@
 git init:
 pip install python-telegram-bot
+heroku login
 import telegram
 from telegram.ext import Updater, CommandHandler, CallbackContext
 from telegram import Update
